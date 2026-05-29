@@ -1,0 +1,17 @@
+{
+  "site": {
+    "title": "My Documentation",
+    "description": "Official documentation"
+  },
+  "locales": {
+    "default": "en",
+    "available": ["en"]
+  },
+  "theme": {
+    "primary_color": "#3b82f6",
+    "dark_mode": true
+  },
+  "footer": {
+    "copyright": "© 2026 My Company"
+  }
+}

@@ -10,10 +10,9 @@ trigger_keywords:
   - "ls sync" / "sync to litestartup"
   - "ls bind" / "bind to litestartup"
   - "ls send" / "send via litestartup"
-  - "update changelog"
-  - "deploy blog post"
-  - "update website"
-version: 0.1.0
+  - "update changelog" / "update docs"
+  - "deploy blog post" / "update website"
+version: 0.2.0
 ---
 
 # LiteStartup Skill
@@ -87,58 +86,334 @@ Steps:
   1. Run `scripts/ls-status.sh`
   2. Display binding info, last sync time, sync count
 
-## Repo Layout Convention
+---
+
+## Content Repo Structure
 
 ```
 <content-repo>/
-├── litestartup.yaml      ← REQUIRED (binding config)
-├── website/*.md          ← Website pages
-├── blog/*.md             ← Blog posts
-├── docs/**/*.md          ← Documentation
-├── changelog/*.md        ← Version changelogs
-└── .gitignore            ← Should ignore drafts/email-*
+├── litestartup.yaml          ← REQUIRED (binding config)
+├── blog/*.md                 ← Blog posts (markdown → HTML by server)
+├── website/*.html            ← Website pages (raw HTML with Tailwind)
+├── changelog/*.md            ← Version changelogs (markdown → HTML by server)
+└── docs/                     ← Documentation (LiteDocs format, markdown)
+    ├── config.json           ← Docs site configuration
+    ├── en/                   ← Default language directory
+    │   ├── _nav.md           ← Top navigation tabs
+    │   ├── _sidebar.md       ← Left sidebar menu
+    │   ├── index.md          ← Docs home page
+    │   ├── guide/            ← Section directory
+    │   │   ├── _sidebar.md   ← Section-specific sidebar (overrides parent)
+    │   │   ├── index.md      ← Section index
+    │   │   └── quick-start.md
+    │   └── api/
+    │       └── ...
+    └── zh/                   ← Additional language (optional)
+        ├── _nav.md
+        ├── _sidebar.md
+        └── index.md
 ```
 
-## Frontmatter Requirements
+---
+
+## Docs Writing Rules (IMPORTANT — follow exactly)
+
+### docs/config.json (required)
+
+```json
+{
+  "site": {
+    "title": "My Docs",
+    "description": "Documentation for My SaaS"
+  },
+  "locales": {
+    "default": "en",
+    "available": ["en"]
+  },
+  "theme": {
+    "primary_color": "#3b82f6",
+    "dark_mode": true
+  },
+  "footer": {
+    "copyright": "© 2026 My Company"
+  }
+}
+```
+
+### docs/{lang}/_nav.md (top navigation tabs)
+
+Each line is a tab. Active tab is auto-detected by URL prefix match.
+Clicking a tab loads its section and the section's `_sidebar.md`.
+
+```markdown
+- [Guide](index.md)
+- [API Reference](api/index.md)
+- [Development](development/index.md)
+```
+
+**Rules:**
+- Links point to `index.md` of each section
+- One line per tab
+- Format: `- [Label](path.md)`
+
+### docs/{lang}/_sidebar.md (left sidebar menu)
+
+```markdown
+- [Introduction](index.md)
+- **Getting Started**
+  - [Quick Start](guide/quick-start.md)
+  - [Configuration](guide/configuration.md)
+- **Features**
+  - [Themes](guide/themes.md)
+  - [Multi-Doc](guide/multi-doc.md)
+- **Reference**
+  - [config.json](reference/config.md)
+```
+
+**Rules:**
+- `**Bold Text**` = collapsible group header (default collapsed)
+- `  - [Label](path.md)` = child item (2-space indent)
+- Links are relative to the language directory
+- Groups with active child auto-expand
+- API method badges: `- <get>[List Users](api/users-list.md)`
+
+### docs/{lang}/{section}/_sidebar.md (section-specific sidebar)
+
+When a section directory (e.g., `development/`) has its own `_sidebar.md`,
+it **replaces** the parent sidebar for pages within that section.
+Links inside are relative to the section directory:
+
+```markdown
+- [Overview](index.md)
+- **Architecture**
+  - [Project Structure](architecture.md)
+  - [Theme System](theme-system.md)
+```
+
+The system automatically prefixes these paths with the section name.
+
+### docs/{lang}/*.md (document pages)
+
+Every doc page has YAML frontmatter:
+
+```yaml
+---
+title: Quick Start
+description: Set up in 2 minutes
+order: 1
+---
+
+# Quick Start
+
+Content here in standard Markdown...
+```
+
+**Frontmatter fields:**
+- `title` — Page title (required, used in browser tab + TOC)
+- `description` — SEO description (optional)
+- `order` — Sort order in sidebar (optional, lower = first)
+
+**Content rules:**
+- Start with `# H1 Title` (matches frontmatter title)
+- Use `## H2` for major sections (these appear in right-side TOC)
+- Use `### H3` for subsections
+- Code blocks with language: ` ```bash `, ` ```json `, etc.
+- Callouts: `> [!NOTE]`, `> [!TIP]`, `> [!WARNING]`, `> [!IMPORTANT]`, `> [!CAUTION]`
+- Internal links: `[Link Text](path.md)` (relative, .md extension)
+- External links: `[Link Text](https://...)` (open in new tab)
+- Frontmatter is stripped before rendering (never shown to user)
+
+### URL path convention
+
+Files map to URLs like this:
+- `docs/en/index.md` → `/docs/en/`
+- `docs/en/guide/quick-start.md` → `/docs/en/guide/quick-start`
+- `docs/zh/index.md` → `/docs/zh/`
+
+Language is in the URL path (not query param). Same structure works in both
+LiteDocs (Python) and LiteStartup (PHP) renderers.
+
+---
+
+## Blog Writing Rules
 
 ### blog/<slug>.md
+
 ```yaml
 ---
-title: "Post Title"          # required
-date: 2026-05-28             # optional (default: today)
-slug: "post-slug"            # optional (default: filename)
-tags: ["tag1", "tag2"]       # optional
-status: "published"          # draft | published (default: published)
+title: "My First Post"
+date: 2026-05-28
+slug: "my-first-post"
+tags: ["release", "feature"]
+status: "published"
 ---
+
+Blog content in Markdown. Will be converted to HTML by the server.
 ```
 
-### website/<page>.md
-```yaml
----
-slug: "about"                # required
-layout: "default"            # optional
-seo_title: "..."             # optional
-seo_description: "..."       # optional
----
-```
+**Fields:**
+- `title` — Required
+- `date` — Optional (default: today)
+- `slug` — Optional (default: from filename)
+- `tags` — Optional array
+- `status` — "published" (default) or "draft"
 
-### docs/<path>.md
-```yaml
 ---
-title: "Doc Title"           # required
-order: 10                    # optional (sort order)
-nav_group: "Getting Started" # optional
----
-```
+
+## Changelog Writing Rules
 
 ### changelog/<version>.md
+
 ```yaml
 ---
-title: "v0.2.0"                          # required
-date: 2026-05-28                         # required
-tags: ["feature", "bugfix"]              # optional
+title: "v0.2.0"
+date: 2026-05-28
+tags: ["feature", "bugfix"]
 ---
+
+## New Features
+- Payment integration
+- New dashboard layout
+
+## Bug Fixes
+- Email sending timeout resolved
 ```
+
+**Fields:**
+- `title` — Version number (required)
+- `date` — Release date (required)
+- `tags` — Optional: feature, improvement, bugfix, breaking, security, deprecated
+
+---
+
+## Website Pages (HTML, not Markdown)
+
+Website pages are **HTML files** (not markdown). They use the LiteStartup
+`parseHtmlTemplate` system which splits pages into header/menu/content/footer.
+
+**CRITICAL**: When syncing to LiteStartup, the HTML goes through `parseHtmlTemplate()`
+on the server. Structure MUST match the rules below or rendering will fail.
+
+### Page Types
+
+There are two website page types with **different code structures**:
+
+| Type | Example | Code Structure |
+|------|---------|----------------|
+| **website** | `index.html` (homepage `/`) | Full independent HTML, must match `index.html` structure |
+| **block** | `pricing.html`, `privacy.html` | Child template with placeholders, inherits parent layout |
+
+### ⚠️ Confirmation Rule
+
+**If the user does not explicitly specify the page type, you MUST confirm with the user before proceeding.**
+The code structure differs significantly — choosing the wrong one will cause parseHtmlTemplate to fail.
+
+---
+
+### Type: website (Main Page)
+
+**Full independent HTML** — contains complete `<!DOCTYPE html>` to `</html>` structure.
+Must match the structure of `index.html`:
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My SaaS | Homepage</title>
+    <!-- Full CSS, meta tags, etc. -->
+</head>
+<body>
+    <header>
+        <nav>...</nav>
+        <!-- Mobile Overlay + Drawer -->
+        <div id="mobileOverlay">...</div>
+        <div id="mobileDrawer">...</div>
+    </header>
+
+    <main>
+        <!-- Page content -->
+        <section class="py-20 px-6">
+            <h1 class="text-4xl font-bold">Hero Section</h1>
+        </section>
+        <script>/* Page-specific JS */</script>
+    </main>
+
+    <footer>...</footer>
+
+    <!-- Shared elements after </footer> -->
+    <button id="toTopBtn">...</button>
+    <script>/* Shared JS (drawer, scroll, etc.) */</script>
+</body>
+</html>
+```
+
+`parseHtmlTemplate()` splits this into 5 parts:
+- `header.phtml` — `<!DOCTYPE html>` to `</head>`
+- `menu.phtml` — `<header>...</header>` (full tag)
+- `layout.phtml` — Remaining content with placeholders
+- `bottom.phtml` — `<footer>...</footer>` (full tag)
+- `footer.phtml` — Everything after `</footer>` to end
+
+---
+
+### Type: block (Child/Module Page)
+
+**Inherits header/menu/bottom/footer from parent** via placeholders. Only write the page body:
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pricing | My SaaS</title>
+</head>
+<body>
+    <header><!-- header placeholder --></header>
+
+    <main>
+        <!--seo:{"title":"Pricing | My SaaS","description":"Simple pricing","og_title":"Pricing","canonical":"https://www.example.com/pricing"}-->
+
+        <!-- PAGE CONTENT ONLY -->
+        <section class="py-20 px-6">
+            <h1 class="text-4xl font-bold">Pricing</h1>
+            <p class="mt-4 text-lg">Choose your plan...</p>
+        </section>
+
+        <script>
+            // Page-specific JavaScript (if any)
+        </script>
+    </main>
+
+    <footer><!-- footer placeholder --></footer>
+</body>
+</html>
+```
+
+At render time, `{{header}}`, `{{menu}}`, `{{bottom}}`, `{{footer}}` are replaced with the parent page's `.phtml` files.
+
+---
+
+### Website Writing Rules (Both Types)
+
+1. **CSS**: Use Tailwind classes or `style=""` inline. NEVER define `<style>` in `<head>` (gets replaced by parent for block type)
+2. **JS**: Page-specific JS goes inside `<main>` in `<script>` tags, NEVER outside
+3. **SEO comment** (block type only): First child inside `<main>` must be `<!--seo:{JSON}-->` with title/description/og fields
+4. **UTM tracking**: Use `{{utm_source}}` in signup/login URLs
+5. **Shared classes**: `.card`, `.btn-primary`, `.fade-in` etc. are available from parent `<head>` (block type)
+6. **URL**: File `website/pricing.html` → renders at `/pricing`
+
+### SEO Comment Keys (block type)
+
+```
+title, description, keywords, canonical,
+og_title, og_description, og_url, og_image, og_site_name,
+twitter_title, twitter_description, twitter_image, json_ld
+```
+
+---
 
 ## Error Handling
 
@@ -156,3 +431,6 @@ tags: ["feature", "bugfix"]              # optional
 - Auto-publish without `git push` first
 - Auto-unpublish on file deletion (must be explicit user request)
 - Retry failed operations without user consent
+- Put docs content in root (must be inside `docs/{lang}/` directory)
+- Forget `_sidebar.md` when creating docs (required for navigation)
+- Use query params for language in links (use path: `/docs/en/...`)
