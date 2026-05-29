@@ -6,12 +6,12 @@ description: |
   as the source of truth. Designed for indie makers who want to update their
   SaaS public content without leaving the AI editor.
 trigger_keywords:
-  - "ls publish" / "publish to litestartup"
-  - "ls sync" / "sync to litestartup"
-  - "ls bind" / "bind to litestartup"
-  - "ls send" / "send via litestartup"
-  - "update changelog" / "update docs"
-  - "deploy blog post" / "update website"
+  - "ls publish / publish to litestartup"
+  - "ls sync / sync to litestartup"
+  - "ls bind / bind to litestartup"
+  - "ls send / send via litestartup"
+  - "update changelog / update docs"
+  - "deploy blog post / update website"
 version: 0.2.0
 ---
 
