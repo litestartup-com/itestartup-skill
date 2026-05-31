@@ -169,6 +169,7 @@ At render time:
 | 7 | SEO comment MUST be first child of `<main>` | Block |
 | 8 | Use `{{utm_source}}` in signup/login URLs | Both |
 | 9 | Shared CSS classes (`.card`, `.btn-primary`, `.fade-in`) are available | Block |
+| 10 | First `<section>` in `<main>` MUST have `pt-24` or more (nav is `fixed h-16`, content will be hidden otherwise) | Both |
 
 ---
 
@@ -226,4 +227,5 @@ If no `json_ld` provided, server auto-generates a `WebPage` schema from SEO fiel
 - [ ] Block pages have SEO comment as first child of `<main>`
 - [ ] No custom CSS classes defined in `<head>` for block pages
 - [ ] All JS is inside `<main>` for block pages
+- [ ] First `<section>` has `pt-24` or more (fixed nav clearance)
 - [ ] `{{utm_source}}` used in signup/login links
