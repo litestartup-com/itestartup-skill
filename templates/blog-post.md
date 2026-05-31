@@ -1,9 +1,16 @@
 ---
-title: "Your Post Title"
+title: "Post Title"
 date: 2026-01-01
-slug: "your-post-slug"
-tags: ["tag1", "tag2"]
+tags: ["topic"]
 status: "published"
 ---
 
-Write your blog post content here in Markdown.
+Introduction paragraph — hook the reader.
+
+## Section Heading
+
+Body content in standard Markdown.
+
+## Conclusion
+
+Closing thoughts.

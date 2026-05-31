@@ -1,0 +1,26 @@
+---
+description: LiteStartup content publishing skill
+globs: ["blog/**", "docs/**", "website/**", "changelog/**", "litestartup.yaml"]
+---
+
+# LiteStartup Skill
+
+Publish blog, docs, website pages and changelogs to LiteStartup.
+
+## Entry Point
+
+Read `litestartup-skill/SKILL.md` for capability routing.
+
+## File References
+
+- Capabilities: `litestartup-skill/capabilities/{bind,sync,email,status}.md`
+- Specs: `litestartup-skill/specs/{docs,blog,website,changelog}.md`
+- Templates: `litestartup-skill/templates/`
+
+## Rules
+
+1. NEVER display API keys — scripts at `litestartup-skill/scripts/` handle auth
+2. Look for `litestartup.yaml` to find the content repo
+3. Read the relevant spec BEFORE writing any content
+4. For website pages: confirm type (website vs block) with user first
+5. After writing: sync via `litestartup-skill/scripts/ls-sync.sh`

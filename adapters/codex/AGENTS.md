@@ -1,24 +1,30 @@
 # LiteStartup Publishing Agent
 
-This repo is connected to [LiteStartup](https://litestartup.com) for content publishing.
+This workspace is connected to [LiteStartup](https://litestartup.com) for content publishing.
 
-## Capabilities
+## Skill Location
 
-You can help the user:
-- Publish blog posts, website pages, docs, and changelogs
-- Send emails and newsletters
-- Check sync status
+- Entry point: `litestartup-skill/SKILL.md` (read this first for routing)
+- Capabilities: `litestartup-skill/capabilities/` (how to perform actions)
+- Content specs: `litestartup-skill/specs/` (how to write content)
+- Templates: `litestartup-skill/templates/` (starter files)
+- Scripts: `litestartup-skill/scripts/` (bash scripts for API calls)
 
-## How to Use
+## Quick Reference
 
-1. Look for `litestartup.yaml` in the workspace to find the content repo
-2. Use the scripts in the `scripts/` directory of the litestartup-skill installation
-3. NEVER read or display API keys — scripts handle auth via `~/.litestartup/credentials`
-4. Always use `git add + commit + push` before calling `ls-sync.sh`
+| User wants to... | Read |
+|-----------------|------|
+| Bind/connect repo | `capabilities/bind.md` |
+| Publish/sync content | `capabilities/sync.md` |
+| Write docs | `specs/docs.md` |
+| Write blog post | `specs/blog.md` |
+| Write website page | `specs/website.md` |
+| Write changelog | `specs/changelog.md` |
+| Send email | `capabilities/email.md` |
+| Check status | `capabilities/status.md` |
 
-## Scripts
+## Security
 
-- `ls-bind.sh` — Bind repo to LiteStartup account
-- `ls-sync.sh` — Sync content (git push + API trigger)
-- `ls-status.sh` — Check sync status
-- `ls-send-email.sh` — Send email (no git needed)
+- NEVER read `~/.litestartup/credentials`
+- NEVER display API keys in conversation
+- Scripts handle all authentication internally

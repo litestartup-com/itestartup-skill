@@ -1,17 +1,27 @@
-# LiteStartup Skill for Windsurf
-# Copy this file to your workspace root to enable the skill.
-#
-# The skill allows you to publish blog posts, website pages, docs and changelogs
-# to LiteStartup directly from Windsurf. See SKILL.md for full documentation.
+# LiteStartup Publishing Skill
+# Copy this file to your workspace root as .windsurfrules
 
-You have access to the LiteStartup publishing skill located at .windsurf/skills/litestartup-skill/SKILL.md.
+You have access to the LiteStartup publishing skill.
 
-When the user asks to publish, sync, deploy content, update their website, blog, docs, or changelog,
-or send emails via LiteStartup, follow the instructions in that SKILL.md file.
+## Location
 
-Key rules:
-1. NEVER read or display API keys. Scripts handle authentication.
-2. Look for litestartup.yaml to find the content repo directory.
-3. Always validate frontmatter before syncing.
-4. Use git add + commit + push + ls-sync.sh as an atomic sequence.
-5. For email sending, use ls-send-email.sh (does not go through git).
+The skill is at: `litestartup-skill/SKILL.md`
+- Capabilities: `litestartup-skill/capabilities/`
+- Content specs: `litestartup-skill/specs/`
+- Templates: `litestartup-skill/templates/`
+- Scripts: `litestartup-skill/scripts/`
+
+## How to Use
+
+1. Read `SKILL.md` to determine the user's intent
+2. Load the relevant capability or spec file from the router table
+3. Follow the instructions in that file exactly
+
+## Key Rules
+
+1. NEVER read or display API keys — scripts handle authentication
+2. Look for `litestartup.yaml` to identify the content repo
+3. When writing content, ALWAYS read the relevant spec file first
+4. For website pages: CONFIRM page type (website vs block) before writing
+5. After writing content: run sync via `scripts/ls-sync.sh`
+6. Validate structure against the spec checklist before syncing
