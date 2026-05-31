@@ -58,7 +58,7 @@ sync:
   blog:
     path: "blog/**/*.md"
   website:
-    path: "website/**/*.md"
+    path: "website/**/*.html"
   docs:
     path: "docs/**/*.md"
   changelog:
