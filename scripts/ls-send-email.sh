@@ -41,15 +41,26 @@ if [ -n "$FROM" ]; then
         ls_error "Missing --to (required when using --from)"
     fi
     echo "Sending email from ${FROM} to ${TO}..."
-    RESPONSE=$(ls_api POST "/client/v2/emails" "{\"from\": \"${FROM}\", \"to\": [\"${TO}\"], \"subject\": \"${SUBJECT}\", \"content\": \"${BODY}\"}")
+    PAYLOAD=$(python3 -c "
+import json, sys
+print(json.dumps({
+    'from': sys.argv[1],
+    'to': [sys.argv[2]],
+    'subject': sys.argv[3],
+    'content': sys.argv[4]
+}))
+" "$FROM" "$TO" "$SUBJECT" "$BODY")
+    RESPONSE=$(ls_api POST "/client/v2/emails" "$PAYLOAD")
 else
     # Notification endpoint (default, requires 'notification' scope)
-    PAYLOAD="{\"subject\": \"${SUBJECT}\", \"content\": \"${BODY}\""
-    if [ -n "$TO" ]; then
-        PAYLOAD="${PAYLOAD}, \"to\": \"${TO}\""
-    fi
-    PAYLOAD="${PAYLOAD}}"
     echo "Sending notification${TO:+ to ${TO}}..."
+    PAYLOAD=$(python3 -c "
+import json, sys
+d = {'subject': sys.argv[1], 'content': sys.argv[2]}
+if sys.argv[3]:
+    d['to'] = sys.argv[3]
+print(json.dumps(d))
+" "$SUBJECT" "$BODY" "$TO")
     RESPONSE=$(ls_api POST "/client/v2/emails/notification" "$PAYLOAD")
 fi
 
