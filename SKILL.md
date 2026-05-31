@@ -29,7 +29,7 @@ When the user makes a request, determine intent and load the relevant file:
 |-------------|------|--------|
 | "bind", "connect repo" | `capabilities/bind.md` | `ls-bind.sh` |
 | "publish", "sync", "deploy" | `capabilities/sync.md` | `ls-sync.sh` |
-| "send email", "newsletter" | `capabilities/email.md` | `ls-send-email.sh` |
+| "send email", "send notification", "email someone" | `capabilities/email.md` | `ls-send-email.sh` |
 | "status", "what's synced" | `capabilities/status.md` | `ls-status.sh` |
 
 When the user wants to **write content**, load the relevant spec:

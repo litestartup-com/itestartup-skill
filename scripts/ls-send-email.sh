@@ -1,23 +1,28 @@
 #!/usr/bin/env bash
 # T-PUBSKILL01 · Send email via LiteStartup (does NOT go through git).
-# Usage: ls-send-email.sh --to=<email> --subject=<subject> --body=<body>
-#    or: ls-send-email.sh --newsletter --subject=<subject> --body=<body>
+#
+# Default: notification endpoint (no custom domain needed, scope: notification)
+# With --from: custom domain email endpoint (scope: email)
+#
+# Usage:
+#   ls-send-email.sh --to=<email> --subject=<subject> --body=<body>
+#   ls-send-email.sh --from=<email> --to=<email> --subject=<subject> --body=<body>
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 source "${SCRIPT_DIR}/_lib.sh"
 
 # Parse arguments
+FROM=""
 TO=""
 SUBJECT=""
 BODY=""
-NEWSLETTER=false
 
 while [[ $# -gt 0 ]]; do
     case $1 in
+        --from=*) FROM="${1#*=}"; shift ;;
         --to=*) TO="${1#*=}"; shift ;;
         --subject=*) SUBJECT="${1#*=}"; shift ;;
         --body=*) BODY="${1#*=}"; shift ;;
-        --newsletter) NEWSLETTER=true; shift ;;
         *) shift ;;
     esac
 done
@@ -30,15 +35,22 @@ if [ -z "$BODY" ]; then
     ls_error "Missing --body"
 fi
 
-if [ "$NEWSLETTER" = true ]; then
-    echo "Sending newsletter..."
-    RESPONSE=$(ls_api POST "/client/v2/newsletters/send" "{\"subject\": \"${SUBJECT}\", \"content\": \"${BODY}\"}")
-else
+if [ -n "$FROM" ]; then
+    # Custom domain email endpoint (requires 'email' scope)
     if [ -z "$TO" ]; then
-        ls_error "Missing --to (recipient email)"
+        ls_error "Missing --to (required when using --from)"
     fi
-    echo "Sending email to ${TO}..."
-    RESPONSE=$(ls_api POST "/client/v2/emails" "{\"to_email\": \"${TO}\", \"subject\": \"${SUBJECT}\", \"content\": \"${BODY}\"}")
+    echo "Sending email from ${FROM} to ${TO}..."
+    RESPONSE=$(ls_api POST "/client/v2/emails" "{\"from\": \"${FROM}\", \"to\": [\"${TO}\"], \"subject\": \"${SUBJECT}\", \"content\": \"${BODY}\"}")
+else
+    # Notification endpoint (default, requires 'notification' scope)
+    PAYLOAD="{\"subject\": \"${SUBJECT}\", \"content\": \"${BODY}\""
+    if [ -n "$TO" ]; then
+        PAYLOAD="${PAYLOAD}, \"to\": \"${TO}\""
+    fi
+    PAYLOAD="${PAYLOAD}}"
+    echo "Sending notification${TO:+ to ${TO}}..."
+    RESPONSE=$(ls_api POST "/client/v2/emails/notification" "$PAYLOAD")
 fi
 
 ls_ok "Email sent"
