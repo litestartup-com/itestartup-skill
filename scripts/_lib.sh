@@ -47,6 +47,17 @@ ls_get_endpoint() {
     grep -oP '(?<=endpoint:\s).*' "${config_dir}/${CONFIG_FILE}" | tr -d ' "'
 }
 
+# Read domain_slug from litestartup.yaml (identifies which binding to sync)
+ls_get_domain_slug() {
+    local config_dir
+    config_dir=$(ls_find_config_dir)
+    if [ -z "$config_dir" ]; then
+        echo ""
+        return
+    fi
+    grep -oP '(?<=domain_slug:\s).*' "${config_dir}/${CONFIG_FILE}" | tr -d ' "'
+}
+
 # Find directory containing litestartup.yaml (search upward)
 ls_find_config_dir() {
     local dir="$PWD"

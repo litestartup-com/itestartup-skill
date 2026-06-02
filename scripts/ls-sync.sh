@@ -40,12 +40,18 @@ else
     ls_warn "git push failed (no remote or auth issue). Sync will use last pushed state."
 fi
 
-# --- Get commit SHA ---
+# --- Get commit SHA + domain_slug ---
 COMMIT_SHA=$(git rev-parse HEAD 2>/dev/null || echo "")
+DOMAIN_SLUG=$(ls_get_domain_slug)
 
 # --- Trigger sync API ---
 echo "Triggering sync..."
-RESPONSE=$(ls_api POST "/client/v2/repo-sync/trigger" "{\"commit_sha\": \"${COMMIT_SHA}\"}")
+TRIGGER_BODY="{\"commit_sha\": \"${COMMIT_SHA}\""
+if [ -n "$DOMAIN_SLUG" ]; then
+    TRIGGER_BODY="${TRIGGER_BODY}, \"domain_slug\": \"${DOMAIN_SLUG}\""
+fi
+TRIGGER_BODY="${TRIGGER_BODY}}"
+RESPONSE=$(ls_api POST "/client/v2/repo-sync/trigger" "$TRIGGER_BODY")
 
 # --- Parse and display results ---
 echo ""

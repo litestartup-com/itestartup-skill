@@ -38,20 +38,21 @@ echo "Binding repo: ${REPO_URL}"
 RESPONSE=$(ls_api POST "/client/v2/repo-sync/bind" "{\"repo_url\": \"${REPO_URL}\"}")
 
 BINDING_ID=$(echo "$RESPONSE" | grep -oP '"binding_id"\s*:\s*\K[0-9]+' 2>/dev/null || echo "")
+DOMAIN_SLUG=$(echo "$RESPONSE" | grep -oP '"domain_slug"\s*:\s*"\K[^"]+' 2>/dev/null || echo "")
 
 if [ -z "$BINDING_ID" ]; then
     # Might be 409 (already bound) - extract from response
     BINDING_ID=$(echo "$RESPONSE" | grep -oP '"binding_id"\s*:\s*\K[0-9]+' 2>/dev/null || echo "unknown")
+    DOMAIN_SLUG=$(echo "$RESPONSE" | grep -oP '"domain_slug"\s*:\s*"\K[^"]+' 2>/dev/null || echo "")
 fi
 
 # --- Create litestartup.yaml ---
-ENDPOINT=$(grep -oP '(?<=endpoint:\s).*' "$CREDENTIALS_FILE" 2>/dev/null || echo "https://api.litestartup.com")
-# Default endpoint if not configured
 ENDPOINT="https://api.litestartup.com"
 
 cat > litestartup.yaml << EOF
 version: 1
 binding_id: ${BINDING_ID}
+domain_slug: ${DOMAIN_SLUG}
 endpoint: ${ENDPOINT}
 repo_url: ${REPO_URL}
 sync:
