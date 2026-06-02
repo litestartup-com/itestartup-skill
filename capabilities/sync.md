@@ -1,9 +1,21 @@
 # Capability: Sync Content
 
 > **Trigger**: User says "publish", "sync", "deploy", or after writing content.
-> **Script**: `scripts/ls-sync.sh [commit_message]`
 
-## Flow
+## Environment Detection
+
+Before syncing, detect the execution environment:
+
+- **Windows (PowerShell)** → Use **AI-native path** (PowerShell + direct REST API calls)
+- **Linux / macOS (bash)** → Use **script path** (`scripts/ls-sync.sh`)
+
+---
+
+## Path A: AI-Native (Windows / PowerShell)
+
+Use this when running in a Windows environment where bash is unavailable.
+
+### Steps
 
 1. Locate directory containing `litestartup.yaml`
 2. Validate changed files have correct frontmatter/structure:
@@ -11,16 +23,41 @@
    - Docs: check `title` + verify `_sidebar.md` exists
    - Website: check structure matches type (website/block)
    - Changelog: check `title` + `date`
-3. Run sync:
-   ```bash
-   scripts/ls-sync.sh "content: add pricing page"
+3. Git commit and push:
+   ```powershell
+   git add -A blog/ website/ docs/ changelog/ litestartup.yaml
+   git commit -m "content: <brief description>"
+   git push
    ```
-4. Script performs atomically:
-   - `git add -A blog/ website/ docs/ changelog/ litestartup.yaml`
-   - `git commit -m "<message>"`
-   - `git push`
-   - `POST /client/v2/repo-sync/trigger` with commit SHA
-5. Report results to user
+4. Read config from `litestartup.yaml` (endpoint, domain_slug)
+5. Read API key from `~/.litestartup/credentials` (file content is the key — **never display it**)
+6. Trigger sync via REST API:
+   ```powershell
+   $commitSha = git rev-parse HEAD
+   $apiKey = Get-Content "$env:USERPROFILE\.litestartup\credentials" -Raw
+   $apiKey = $apiKey.Trim()
+   $body = "{`"commit_sha`": `"$commitSha`", `"domain_slug`": `"<domain_slug_from_yaml>`"}"
+   $response = Invoke-RestMethod -Uri "<endpoint>/client/v2/repo-sync/trigger" `
+     -Method POST `
+     -Headers @{ Authorization = "Bearer $apiKey"; "Content-Type" = "application/json" } `
+     -Body $body
+   $response | ConvertTo-Json -Depth 5
+   ```
+7. Parse and report results to user (inserted / updated / skipped / conflicts / urls)
+
+---
+
+## Path B: Script (Linux / macOS / WSL)
+
+```bash
+scripts/ls-sync.sh "content: add pricing page"
+```
+
+Script performs atomically:
+- `git add -A blog/ website/ docs/ changelog/ litestartup.yaml`
+- `git commit -m "<message>"`
+- `git push`
+- `POST /client/v2/repo-sync/trigger` with commit SHA
 
 ## Commit Message Convention
 
