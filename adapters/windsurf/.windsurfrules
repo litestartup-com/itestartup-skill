@@ -19,9 +19,9 @@ The skill is at: `litestartup-skill/SKILL.md`
 
 ## Key Rules
 
-1. NEVER read or display API keys — scripts handle authentication
+1. NEVER read or display API keys (`~/.litestartup/credentials`)
 2. Look for `litestartup.yaml` to identify the content repo
 3. When writing content, ALWAYS read the relevant spec file first
 4. For website pages: CONFIRM page type (website vs block) before writing
-5. After writing content: run sync via `scripts/ls-sync.sh`
+5. After writing content: sync per `capabilities/sync.md` (environment-aware: Windows → AI-native API / Linux → script)
 6. Validate structure against the spec checklist before syncing

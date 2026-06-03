@@ -12,7 +12,13 @@ You have access to the LiteStartup content publishing system.
 
 ## Security
 
-NEVER read or display `~/.litestartup/credentials`. Scripts handle auth.
+NEVER read or display `~/.litestartup/credentials`.
+
+## Sync
+
+Read `capabilities/sync.md` for environment-aware sync:
+- **Windows (PowerShell)** → AI-native path (direct REST API calls)
+- **Linux / macOS** → `scripts/ls-sync.sh`
 
 ## Quick Routing
 

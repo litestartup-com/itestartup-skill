@@ -166,16 +166,17 @@ At render time:
 | 4 | NEVER put `<script>` outside `<main>` (except in website type's footer area) | Block |
 | 5 | Use `<header><!-- header placeholder --></header>` exactly | Block |
 | 6 | Use `<footer><!-- footer placeholder --></footer>` exactly | Block |
-| 7 | SEO comment MUST be first child of `<main>` | Block |
+| 7 | SEO comment recommended as first child of `<main>` (auto-generated if omitted) | Block |
 | 8 | Use `{{utm_source}}` in signup/login URLs | Both |
 | 9 | Shared CSS classes (`.card`, `.btn-primary`, `.fade-in`) are available | Block |
 | 10 | First `<section>` in `<main>` MUST have `pt-24` or more (nav is `fixed h-16`, content will be hidden otherwise) | Both |
 
 ---
 
-## SEO Comment (Block Pages Only)
+## SEO Comment (Block Pages — Recommended)
 
-First child inside `<main>`, invisible to visitors:
+Recommended as first child inside `<main>`, invisible to visitors.
+If omitted, server auto-generates default title/description from the page name and URL path.
 
 ```html
 <!--seo:{"title":"Page Title | Brand","description":"Page description","keywords":"keyword1, keyword2","canonical":"https://www.example.com/page","og_title":"OG Title","og_description":"OG Description","og_url":"https://www.example.com/page","og_image":"https://www.example.com/imgs/og.jpg","og_site_name":"Brand","twitter_title":"Twitter Title","twitter_description":"Twitter Desc","twitter_image":"https://www.example.com/imgs/twitter.jpg","json_ld":{"@type":"FAQPage"}}-->
@@ -203,11 +204,30 @@ If no `json_ld` provided, server auto-generates a `WebPage` schema from SEO fiel
 
 ---
 
+## Directory Organization
+
+```
+website/
+├── index.html                 ← type: website (homepage, full HTML)
+├── pricing.html               ← type: block → /pricing
+├── about.html                 ← type: block → /about
+├── products/                  ← Product pages
+│   ├── workmail.html          ← type: block → /products/workmail
+│   └── ai-content.html        ← type: block → /products/ai-content
+└── solutions/                 ← Solution pages
+    ├── agencies.html          ← type: block → /solutions/agencies
+    └── developers.html        ← type: block → /solutions/developers
+```
+
+Subdirectories are fully supported. Nesting depth is unlimited.
+
+---
+
 ## URL Mapping
 
 **File extension**: `.html` (NOT `.md`). Server processes `.html` files only for website type.
 
-**Special rule**: `index.html` maps to `/` (root path). All other files map to `/{filename}`.
+**Special rule**: `index.html` maps to `/` (root path). All other files map to `/{path}` (preserving subdirectory structure).
 
 | File | URL |
 |------|-----|
@@ -215,7 +235,10 @@ If no `json_ld` provided, server auto-generates a `WebPage` schema from SEO fiel
 | `website/pricing.html` | `/pricing` |
 | `website/about.html` | `/about` |
 | `website/privacy.html` | `/privacy` |
-| `website/terms.html` | `/terms` |
+| `website/products/workmail.html` | `/products/workmail` |
+| `website/products/ai-content.html` | `/products/ai-content` |
+| `website/solutions/agencies.html` | `/solutions/agencies` |
+| `website/solutions/developers.html` | `/solutions/developers` |
 
 ---
 
@@ -224,7 +247,7 @@ If no `json_ld` provided, server auto-generates a `WebPage` schema from SEO fiel
 - [ ] Page type confirmed (website or block)
 - [ ] Structure matches the correct type template exactly
 - [ ] Block pages have `<!-- header placeholder -->` and `<!-- footer placeholder -->`
-- [ ] Block pages have SEO comment as first child of `<main>`
+- [ ] Block pages have SEO comment as first child of `<main>` (recommended, not required)
 - [ ] No custom CSS classes defined in `<head>` for block pages
 - [ ] All JS is inside `<main>` for block pages
 - [ ] First `<section>` has `pt-24` or more (fixed nav clearance)

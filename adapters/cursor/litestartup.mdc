@@ -19,8 +19,8 @@ Read `litestartup-skill/SKILL.md` for capability routing.
 
 ## Rules
 
-1. NEVER display API keys — scripts at `litestartup-skill/scripts/` handle auth
+1. NEVER display API keys (`~/.litestartup/credentials`)
 2. Look for `litestartup.yaml` to find the content repo
 3. Read the relevant spec BEFORE writing any content
 4. For website pages: confirm type (website vs block) with user first
-5. After writing: sync via `litestartup-skill/scripts/ls-sync.sh`
+5. After writing: sync per `capabilities/sync.md` (Windows → AI-native API / Linux → script)

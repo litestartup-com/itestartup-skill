@@ -49,7 +49,11 @@ After writing → run sync (capabilities/sync.md).
 <content-repo>/
 ├── litestartup.yaml          ← Binding config (auto-created by ls-bind.sh)
 ├── blog/*.md                 ← Blog posts (markdown → HTML by server)
-├── website/*.html            ← Website pages (raw HTML, Tailwind CSS)
+├── website/                  ← Website pages (raw HTML, Tailwind CSS)
+│   ├── index.html            ← Homepage (type: website, full HTML)
+│   ├── *.html                ← Root block pages (/pricing, /about, etc.)
+│   ├── products/*.html       ← Product pages (/products/workmail, etc.)
+│   └── solutions/*.html      ← Solution pages (/solutions/agencies, etc.)
 ├── changelog/*.md            ← Release changelogs (markdown → HTML)
 └── docs/                     ← Documentation (LiteDocs format)
     ├── config.json           ← Docs site config

@@ -34,16 +34,37 @@ Use this when running in a Windows environment where bash is unavailable.
 6. Trigger sync via REST API:
    ```powershell
    $commitSha = git rev-parse HEAD
-   $apiKey = Get-Content "$env:USERPROFILE\.litestartup\credentials" -Raw
-   $apiKey = $apiKey.Trim()
-   $body = "{`"commit_sha`": `"$commitSha`", `"domain_slug`": `"<domain_slug_from_yaml>`"}"
-   $response = Invoke-RestMethod -Uri "<endpoint>/client/v2/repo-sync/trigger" `
+   $apiKey = (Get-Content "$env:USERPROFILE\.litestartup\credentials" -Raw).Trim()
+   $body = @{ commit_sha = $commitSha; domain_slug = "<domain_slug_from_yaml>" } | ConvertTo-Json
+   $r = Invoke-RestMethod -Uri "<endpoint>/client/v2/repo-sync/trigger" `
      -Method POST `
      -Headers @{ Authorization = "Bearer $apiKey"; "Content-Type" = "application/json" } `
      -Body $body
-   $response | ConvertTo-Json -Depth 5
    ```
-7. Parse and report results to user (inserted / updated / skipped / conflicts / urls)
+7. Report results using compact output:
+   ```powershell
+   "code=$($r.code) msg=$($r.message)"
+   "inserted=$($r.data.synced.inserted.Count) updated=$($r.data.synced.updated.Count) skipped=$($r.data.synced.skipped_count)"
+   if ($r.data.synced.inserted.Count -gt 0) { $r.data.synced.inserted }
+   if ($r.data.synced.updated.Count -gt 0) { $r.data.synced.updated }
+   if ($r.data.needs_confirm.Count -gt 0) { $r.data.needs_confirm | ConvertTo-Json -Depth 3 }
+   if ($r.data.conflicts.Count -gt 0) { $r.data.conflicts | ConvertTo-Json -Depth 3 }
+   ```
+
+### Handling `needs_confirm`
+
+If response contains `needs_confirm` items, **only report them to the user**. Do NOT call the confirm API automatically.
+
+Report format:
+```
+⚠️ Server detected files that may need deletion:
+  - [action] [path] (resource_type: [type])
+Please handle manually in the LiteStartup dashboard, or remove/add the file in your repo and re-sync.
+```
+
+Common scenarios:
+- `delete_doc` — .md file removed from repo, server asks to confirm deletion
+- `unpublish` — content file removed, server asks to confirm unpublishing
 
 ---
 
@@ -72,14 +93,16 @@ Examples:
 ## Sync Results
 
 The API returns:
-- **inserted** — New files published
-- **updated** — Existing files updated
-- **skipped** — No changes detected
+- **inserted** — New files published (full path list)
+- **updated** — Existing files updated (full path list)
+- **skipped_count** — Number of unchanged files (integer, no path list)
 - **conflicts** — Server has newer edits (manual resolution needed)
+- **needs_confirm** — Destructive actions pending user decision (report only, do not execute)
 - **urls** — Live URLs for published content
 
 ## Important Notes
 
+- Sync API is **idempotent** — repeated calls with same commit_sha safely return skipped; safe to re-trigger if unsure whether previous sync succeeded
 - Website HTML goes through `parseHtmlTemplate()` on server — structure must match
 - Docs files are rendered as-is through markdown parser
 - Blog/changelog markdown is converted to HTML server-side

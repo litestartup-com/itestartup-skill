@@ -23,8 +23,13 @@ This workspace is connected to [LiteStartup](https://litestartup.com) for conten
 | Send email | `capabilities/email.md` |
 | Check status | `capabilities/status.md` |
 
+## Sync
+
+Environment-aware (see `capabilities/sync.md`):
+- **Windows (PowerShell)** → AI-native path (direct REST API calls)
+- **Linux / macOS** → `scripts/ls-sync.sh`
+
 ## Security
 
-- NEVER read `~/.litestartup/credentials`
+- NEVER read or display `~/.litestartup/credentials`
 - NEVER display API keys in conversation
-- Scripts handle all authentication internally
