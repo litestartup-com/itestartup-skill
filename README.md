@@ -60,7 +60,7 @@ Create a new git repository for your content (e.g., `my-litestartup-content`).
 
 In your AI editor: `> Bind my-litestartup-content repo to my LiteStartup account`
 
-### 3. Publish
+### 4. Publish
 
 ```
 > Write a blog post about our v0.3.0 release and publish it
