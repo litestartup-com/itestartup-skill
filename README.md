@@ -4,7 +4,7 @@
 
 ## What is this?
 
-A modular skill package for AI editors (Cursor, Claude Code, Codex, Windsurf) that lets you publish blog, docs, website, and changelog to https://yourdomain.com directly from your AI editor.
+A modular skill package for AI editors (Cursor, Claude Code, Codex, Windsurf) that lets you publish blog, docs, website, and changelog to yourdomain.com directly from your AI editor.
 
 ## Architecture
 
