@@ -55,7 +55,7 @@ After writing → run sync (capabilities/sync.md).
 │   ├── products/*.html       ← Product pages (/products/workmail, etc.)
 │   └── solutions/*.html      ← Solution pages (/solutions/agencies, etc.)
 ├── changelog/*.md            ← Release changelogs (markdown → HTML)
-└── docs/                     ← Documentation (LiteDocs format)
+└── docs/                     ← Documentation (Litestartup Docs format)
     ├── config.json           ← Docs site config
     └── {lang}/               ← Language dirs (en/, zh/, etc.)
         ├── _nav.md           ← Top nav tabs

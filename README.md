@@ -17,7 +17,7 @@ litestartup-skill/
 │   ├── email.md           ← Send emails/newsletters
 │   └── status.md          ← Check sync status
 ├── specs/                  ← How to write content (format rules)
-│   ├── docs.md            ← Documentation (LiteDocs markdown)
+│   ├── docs.md            ← Documentation (Litestartup Docs markdown)
 │   ├── blog.md            ← Blog posts (markdown)
 │   ├── changelog.md       ← Release changelogs (markdown)
 │   └── website.md         ← Website pages (HTML + Tailwind)
