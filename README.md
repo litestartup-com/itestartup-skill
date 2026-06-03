@@ -42,30 +42,53 @@ litestartup-skill/
 
 ## Quick Start
 
-### 1. Install
+### 1. Create a public git repo
 
-**Windsurf:** Copy `adapters/windsurf/.windsurfrules` to workspace root.
+Create a new public repository on GitHub/GitLab/Gitee for your content.
 
-**Cursor:** Copy `adapters/cursor/litestartup.mdc` to `.cursor/rules/`.
+### 2. Install Litestartup Skill
 
-**Claude Code:** Copy `adapters/claude/CLAUDE.md` to workspace root.
+Clone this repo and copy the adapter file for your editor:
 
-**Codex:** Place `adapters/codex/AGENTS.md` in workspace root.
+| Editor | Copy from | Copy to |
+|--------|-----------|----------|
+| Windsurf | `adapters/windsurf/.windsurfrules` | `.windsurfrules` (workspace root) |
+| Cursor | `adapters/cursor/litestartup.mdc` | `.cursor/rules/litestartup.mdc` |
+| Claude Code | `adapters/claude/CLAUDE.md` | `CLAUDE.md` (workspace root) |
+| Codex | `adapters/codex/AGENTS.md` | `AGENTS.md` (workspace root) |
 
-### 2. Create your content repo
+### 3. Get API Key
 
-Create a new git repository for your content (e.g., `my-litestartup-content`).
+Log in to [LiteStartup Dashboard](https://app.litestartup.com) → Settings → API Keys → Create with `system.publish` scope (add `notification` / `email` scope if you need to send emails).
 
-### 3. Bind repo
+### 4. Bind repo
 
-In your AI editor: `> Bind my-litestartup-content repo to my LiteStartup account`
-
-### 4. Publish
+In your AI editor:
 
 ```
-> Write a blog post about our v0.3.0 release and publish it
-> Update the pricing page
-> Add a Quick Start guide to docs
+> Bind this repo to my LiteStartup account.
+```
+
+### 5. Initialize content
+
+```
+> Initialize this content repo for my project. Create a homepage, a blog post, and a quickstart doc.
+```
+
+### 6. Sync and publish
+
+```
+> Sync all my content to production.
+```
+
+### 7. Ongoing workflow
+
+Keep your content up to date alongside your code:
+
+```
+> Our pricing changed to $12/mo. Update the pricing page and write a changelog entry.
+> Write a blog post about our new API v2 release. Then sync it.
+> Send a notification email about the new feature.
 ```
 
 ## Design Principles
@@ -87,6 +110,13 @@ In your AI editor: `> Bind my-litestartup-content repo to my LiteStartup account
 - `git`, `curl`, `bash`
 - A [LiteStartup](https://litestartup.com) account with API key
 - A public (not private) git repository (GitHub/GitLab/Gitee)
+
+## Links
+
+- **Website**: https://www.litestartup.com/products/litestartup-skill
+- **Documentation**: https://www.litestartup.com/docs/en/features/litestartup-skill
+- **Support**: support@litestartup.com
+- **GitHub**: https://github.com/litestartup-com/litestartup-skill
 
 ## License
 
