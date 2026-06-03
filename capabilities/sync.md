@@ -35,7 +35,13 @@ Use this when running in a Windows environment where bash is unavailable.
    ```powershell
    $commitSha = git rev-parse HEAD
    $apiKey = (Get-Content "$env:USERPROFILE\.litestartup\credentials" -Raw).Trim()
+   # Full sync (all files):
    $body = @{ commit_sha = $commitSha; domain_slug = "<domain_slug_from_yaml>" } | ConvertTo-Json
+   # Partial sync (only changed files — optional, faster):
+   $changed = (git diff --name-only HEAD~1 HEAD) -match '^(blog|website|docs|changelog)/'
+   if ($changed) {
+     $body = @{ commit_sha = $commitSha; domain_slug = "<domain_slug_from_yaml>"; paths = @($changed) } | ConvertTo-Json -Depth 3
+   }
    $r = Invoke-RestMethod -Uri "<endpoint>/client/v2/repo-sync/trigger" `
      -Method POST `
      -Headers @{ Authorization = "Bearer $apiKey"; "Content-Type" = "application/json" } `
@@ -99,6 +105,24 @@ The API returns:
 - **conflicts** — Server has newer edits (manual resolution needed)
 - **needs_confirm** — Destructive actions pending user decision (report only, do not execute)
 - **urls** — Live URLs for published content
+
+## Partial Sync (paths parameter)
+
+The API accepts an optional `paths` array to sync only specific files:
+
+```json
+{ "commit_sha": "abc", "domain_slug": "xxx", "paths": ["website/index.html", "blog/new-post.md"] }
+```
+
+**Behavior differences**:
+- `paths` empty or omitted → **full sync** (all files, deletion detection, updates last_synced_sha)
+- `paths` provided → **partial sync** (only listed files, no deletion detection, does NOT update last_synced_sha)
+
+**When to use partial sync**:
+- User only changed 1-2 files and wants faster feedback
+- AI detects small change set via `git diff --name-only`
+
+**Path format**: relative from repo root, e.g. `website/products/workmail.html`, `docs/en/guide/quick-start.md`. Must start with `blog/`, `website/`, `docs/`, or `changelog/`.
 
 ## Important Notes
 
