@@ -1,10 +1,10 @@
 # LiteStartup Skill
 
-> Turn your AI coding editor into a SaaS publishing console — bind a git repo, write content, ship to production with one prompt.
+> Publish blog, docs, website, and changelog directly from your AI-powered editor. Write content, run one prompt, go live in seconds.
 
 ## What is this?
 
-A modular skill package for AI editors (Windsurf, Cursor, Claude Code, Codex) that lets you publish content to [LiteStartup](https://litestartup.com) directly from your editor.
+A modular skill package for AI editors (Cursor, Claude Code, Codex, Windsurf) that lets you publish blog, docs, website, and changelog to https://yourdomain.com directly from your AI editor.
 
 ## Architecture
 
@@ -52,9 +52,13 @@ litestartup-skill/
 
 **Codex:** Place `adapters/codex/AGENTS.md` in workspace root.
 
-### 2. Bind
+### 2. Create your content repo
 
-In your AI editor: `> Bind this repo to my LiteStartup account`
+Create a new git repository for your content (e.g., `my-litestartup-content`).
+
+### 3. Bind repo
+
+In your AI editor: `> Bind my-litestartup-content repo to my LiteStartup account`
 
 ### 3. Publish
 
@@ -82,7 +86,7 @@ In your AI editor: `> Bind this repo to my LiteStartup account`
 
 - `git`, `curl`, `bash`
 - A [LiteStartup](https://litestartup.com) account with API key
-- A public git repository (GitHub/GitLab/Gitee)
+- A public (not private) git repository (GitHub/GitLab/Gitee)
 
 ## License
 
