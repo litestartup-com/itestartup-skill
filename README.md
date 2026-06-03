@@ -115,8 +115,9 @@ Keep your content up to date alongside your code:
 
 - **Website**: https://www.litestartup.com/products/litestartup-skill
 - **Documentation**: https://www.litestartup.com/docs/en/features/litestartup-skill
+- **Demo Repo**: https://github.com/litestartup-com/litestartup-workspace
+
 - **Support**: support@litestartup.com
-- **GitHub**: https://github.com/litestartup-com/litestartup-skill
 
 ## License
 
