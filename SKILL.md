@@ -1,7 +1,7 @@
 ---
 name: litestartup
 description: Publish blog, docs, website, changelog and send emails via LiteStartup.
-version: 0.3.0
+version: 0.4.0
 ---
 
 # LiteStartup Skill
@@ -27,7 +27,7 @@ When the user makes a request, determine intent and load the relevant file:
 
 | User Intent | Load | Script |
 |-------------|------|--------|
-| "bind", "connect repo" | `capabilities/bind.md` | `ls-bind.sh` |
+| "bind", "connect repo", "unbind", "list domains" | `capabilities/bind.md` | `ls-bind.sh` |
 | "publish", "sync", "deploy" | `capabilities/sync.md` | `ls-sync.sh` |
 | "send email", "send notification", "email someone" | `capabilities/email.md` | `ls-send-email.sh` |
 | "status", "what's synced" | `capabilities/status.md` | `ls-status.sh` |

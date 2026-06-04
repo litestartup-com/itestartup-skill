@@ -37,14 +37,20 @@ ls_get_api_key() {
     cat "$CREDENTIALS_FILE"
 }
 
-# Read endpoint from litestartup.yaml (simple grep)
+# Default endpoint (used when no litestartup.yaml exists yet, e.g. during bind)
+LS_DEFAULT_ENDPOINT="https://api.litestartup.com"
+
+# Read endpoint from litestartup.yaml (falls back to default if no config)
 ls_get_endpoint() {
     local config_dir
     config_dir=$(ls_find_config_dir)
     if [ -z "$config_dir" ]; then
-        ls_error "No litestartup.yaml found in workspace."
+        echo "$LS_DEFAULT_ENDPOINT"
+        return
     fi
-    grep -oP '(?<=endpoint:\s).*' "${config_dir}/${CONFIG_FILE}" | tr -d ' "'
+    local ep
+    ep=$(grep -oP '(?<=endpoint:\s).*' "${config_dir}/${CONFIG_FILE}" 2>/dev/null | tr -d ' "')
+    echo "${ep:-$LS_DEFAULT_ENDPOINT}"
 }
 
 # Read domain_slug from litestartup.yaml (identifies which binding to sync)
@@ -72,10 +78,12 @@ ls_find_config_dir() {
 }
 
 # Make authenticated API call (key from file, not from args)
+# Exits on 4xx/5xx by default. Pass "nofail" as $4 to suppress exit on error.
 ls_api() {
     local method="$1"
     local path="$2"
     local body="${3:-}"
+    local nofail="${4:-}"
     local endpoint
     local api_key
 
@@ -96,11 +104,28 @@ ls_api() {
     local code
     code=$(echo "$response" | grep -oP '"code"\s*:\s*\K[0-9]+' 2>/dev/null || echo "0")
 
-    if [ "$code" -ge 400 ] 2>/dev/null; then
+    if [ "$code" -ge 400 ] 2>/dev/null && [ "$nofail" != "nofail" ]; then
         local message
         message=$(echo "$response" | grep -oP '"message"\s*:\s*"\K[^"]+' 2>/dev/null || echo "Unknown error")
         ls_error "API error ($code): $message"
     fi
 
     echo "$response"
+}
+
+# List domains for the current account (GET /client/v2/repo-sync/domains)
+# Returns raw JSON response. Caller parses with python3/jq.
+ls_list_domains() {
+    ls_api GET "/client/v2/repo-sync/domains"
+}
+
+# Extract domain_slug from litestartup.yaml
+ls_get_domain() {
+    local config_dir
+    config_dir=$(ls_find_config_dir)
+    if [ -z "$config_dir" ]; then
+        echo ""
+        return
+    fi
+    grep -oP '(?<=^domain:\s).*' "${config_dir}/${CONFIG_FILE}" 2>/dev/null | tr -d ' "' || echo ""
 }
