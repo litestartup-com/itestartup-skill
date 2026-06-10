@@ -1,10 +1,10 @@
 # LiteStartup Skill
 
-> Publish blog, docs, website, and changelog directly from your AI-powered editor. Write content, run one prompt, go live in seconds.
+> Publish blog, docs, website, and changelog directly from your AI coding agent. Write content, run one prompt, go live in seconds.
 
 ## What is this?
 
-A modular skill package for AI editors (Cursor, Claude Code, Codex, Windsurf) that lets you publish blog, docs, website, and changelog to yourdomain.com directly from your AI editor.
+A modular skill package for AI coding agent (Cursor, Claude Code, Codex, Windsurf) that lets you publish blog, docs, website, and changelog to yourdomain.com directly from your AI editor.
 
 ## Architecture
 
