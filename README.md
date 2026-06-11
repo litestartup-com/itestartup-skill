@@ -2,6 +2,8 @@
 
 > Publish blog, docs, website, and changelog directly from your AI coding agent. Write content, run one prompt, go live in seconds.
 
+This repository has been archived. The new repository address is: https://github.com/litestartup-com/litestartup-skills
+
 ## What is this?
 
 A modular skill package for AI coding agent (Cursor, Claude Code, Codex, Windsurf) that lets you publish blog, docs, website, and changelog to yourdomain.com directly from your AI editor.
